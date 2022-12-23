@@ -2,7 +2,7 @@
 
 ## Navigatie Code
 
-This code uses a pretrained word2vec embedding with a biderictional layers with tensorflow.
+This code uses a pretrained word2vec embedding with a bidirectional layers with tensorflow.
 Model also contains LIME Text Explainer which returns local explanations for predictions.
 
 ### download_embedding.sh
