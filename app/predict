@@ -26,7 +26,7 @@ def predict():
     except Exception as e:
         print("error!")
         # Write out an error file. This will be returned as the failureReason to the client.
-        failure_file_path = os.path.join(failure_path,"test_failure.txt")
+        failure_file_path = os.path.join(failure_path,"predict_failure.txt")
         trc = traceback.format_exc()
         with open(failure_file_path, 'w') as s:
             s.write('Exception during prediction: ' + str(e) + '\n' + trc)
