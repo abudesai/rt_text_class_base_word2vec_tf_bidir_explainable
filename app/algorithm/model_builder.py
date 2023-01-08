@@ -119,30 +119,25 @@ class RNN_pretrained_embed:
         
         callbacks = [] # we add desired call backs in a list # If no callback is desired, leave list empty
         # Kindly change patience as you see fit in your project
-        callbacks.append(tf.keras.callbacks.EarlyStopping(patience=3,
-                                                          verbose=1,
-                                                          restore_best_weights=True,
-                                                          monitor="loss" if x_val is None else "val_loss"
-                                                          )) 
+        callbacks.append(
+            tf.keras.callbacks.EarlyStopping(
+                patience=3,
+                verbose=1,
+                restore_best_weights=True,
+                monitor="loss" if x_val is None else "val_loss"
+                )
+            ) 
 
-        if x_val is None:
-            self.model.fit(
-                x_train, 
-                y_train, 
-                epochs=epochs, 
-                callbacks=call_backs,
-                verbose=1
-            )
-        else:
-            self.model.fit(
-                x_train,
-                y_train,
-                epochs=epochs,
-                validation_data=(x_val, y_val),
-                validation_steps=len(x_val),
-                callbacks=call_backs,
-                verbose=1
-            )
+        self.model.fit(
+            x_train,
+            y_train,
+            epochs=epochs,
+            validation_data=None if x_val is None else (x_val, y_val),
+            validation_steps=None if x_val is None else len(x_val),
+            callbacks=callbacks,
+            verbose=1
+        )
+            
 
         return self.model
 

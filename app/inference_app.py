@@ -9,6 +9,10 @@ import traceback
 import sys
 import os
 import warnings
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # or any {'0', '1', '2'}
+os.environ["CUDA_VISIBLE_DEVICES"] = ""  # dont need gpu for inference
+warnings.filterwarnings("ignore")
+
 from algorithm.predictions_handler import Predictor
 from algorithm.model_builder import load_model
 import config
@@ -18,8 +22,6 @@ import json
 
 MODEL_NAME = config.MODEL_NAME
 failure_path = config.FAILURE_PATH
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # or any {'0', '1', '2'}
-warnings.filterwarnings("ignore")
 
 
 model = load_model()
