@@ -121,7 +121,7 @@ class RNN_pretrained_embed:
         # Kindly change patience as you see fit in your project
         callbacks.append(
             tf.keras.callbacks.EarlyStopping(
-                patience=3,
+                patience=2,
                 verbose=1,
                 restore_best_weights=True,
                 monitor="loss" if x_val is None else "val_loss"
