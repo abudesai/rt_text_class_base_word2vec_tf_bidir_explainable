@@ -43,7 +43,6 @@ class explainer:
         """Returns final prediction class"""
         self.indx_pred = np.argmax(self.exp.predict_proba)
         prediction = self.class_names[self.indx_pred]
-        print("prediction", prediction)
         return prediction
 
     def get_label_probabilities(self):
@@ -52,7 +51,6 @@ class explainer:
         predic_proba = self.exp.predict_proba
         for indx, label in enumerate(self.class_names):
             label_probs[label] = np.round(predic_proba[indx], 5)
-        print("label_probs", label_probs)
         return label_probs
 
     def get_explanations(self):
@@ -74,7 +72,7 @@ class explainer:
 
         return words_with_score
 
-    def produce_explainations(self, data):
+    def produce_explainations(self, data, as_json=True):
         """Takes data to explain and return a dictionary with predictions, labels and words with their position and score"""
         if data.shape[0] > self.MAX_LOCAL_EXPLANATIONS:
             msg = f"""Warning!
@@ -101,7 +99,28 @@ class explainer:
             pred_list.append(result)
 
         output["predictions"] = pred_list
+
+        if as_json: 
+            output = json.dumps(
+                output,
+                default=lambda o: make_serializable(o),
+                indent=4,
+                separators=(",", ": "),
+            )
+
         return output
+
+
+
+def make_serializable(obj):
+    if isinstance(obj, (int, np.integer)):
+        return int(obj)
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    else:
+        return json.JSONEncoder.default(None, obj)
 
 
 def read_data_config_schema():

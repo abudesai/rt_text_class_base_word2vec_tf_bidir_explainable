@@ -1,11 +1,11 @@
 import warnings
-import numpy as np
+import numpy as np, pandas as pd
 import tensorflow as tf
 import os
+import json
 import config
-import pandas as pd
-from Utils.model_builder import load_model
-from Utils.preprocess.preprocess import preprocess_data, prep_NUMERIC, prep_TEXT
+from algorithm.model_builder import load_model
+from algorithm.preprocess.preprocess import preprocess_data, prep_NUMERIC, prep_TEXT
 import logging
 import os
 from abc import ABC, abstractmethod
@@ -146,7 +146,10 @@ class Predictor(__predictor_base_explain):
                 if k not in [id_col_name, "__label"]
             }
             predictions_response.append(pred_obj)
+        predictions_response = json.dumps({"predictions": predictions_response})
         return predictions_response
+
+
 
     def conv_labels_no_probability(self, preds):
         # preds = np.array(tf.squeeze(preds))

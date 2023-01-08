@@ -1,4 +1,4 @@
-from Utils.preprocess.preprocess import prep_TEXT
+from algorithm.preprocess.preprocess import prep_TEXT
 import config
 import numpy as np
 import sys
@@ -16,6 +16,7 @@ import tensorflow as tf
 import os
 import logging
 import os
+import random
 
 logging.disable(logging.WARNING)
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -26,8 +27,13 @@ MODEL_SAVE_PATH = config.MODEL_SAVE_PATH
 PRETRAINED_EMBEDD_PATH = config.PRETRAINED_EMBEDD_PATH
 EMBED_DIM = config.EMBED_DIM
 
-seed = config.RAND_SEED
-tf.random.set_seed(seed)
+seed_value = config.RAND_SEED
+os.environ['PYTHONHASHSEED']=str(seed_value)
+random.seed(seed_value)
+np.random.seed(seed_value)
+tf.random.set_seed(seed_value)
+
+
 
 
 class RNN_pretrained_embed:
@@ -45,9 +51,6 @@ class RNN_pretrained_embed:
         text_vectorizer = prep_TEXT.load_text_vectorizer()
 
         voc = text_vectorizer.get_vocabulary()
-
-        # We defined output lenght during preprocessing, now getting it for embedding layer
-        max_length = len(tf.squeeze(text_vectorizer(["dsads"])))
 
         embedding_dim = EMBED_DIM
         num_tokens = len(voc) + 2
@@ -84,7 +87,6 @@ class RNN_pretrained_embed:
             model.add(Dense(1, activation="sigmoid"))
             loss = tf.keras.losses.BinaryCrossentropy()
             model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
-
         # model.summary(); sys.exit()
         return model
 
@@ -94,7 +96,6 @@ class RNN_pretrained_embed:
         y_train,
         x_val=None,
         y_val=None,
-        call_backs=[],
         epochs=10,
         num_layers=1,
         neurons_num=50,
@@ -115,8 +116,23 @@ class RNN_pretrained_embed:
             if not y_val is None:
                 y_val = tf.squeeze(tf.one_hot(y_val, num_classes))
 
+        
+        callbacks = [] # we add desired call backs in a list # If no callback is desired, leave list empty
+        # Kindly change patience as you see fit in your project
+        callbacks.append(tf.keras.callbacks.EarlyStopping(patience=3,
+                                                          verbose=1,
+                                                          restore_best_weights=True,
+                                                          monitor="loss" if x_val is None else "val_loss"
+                                                          )) 
+
         if x_val is None:
-            self.model.fit(x_train, y_train, epochs=epochs, callbacks=call_backs)
+            self.model.fit(
+                x_train, 
+                y_train, 
+                epochs=epochs, 
+                callbacks=call_backs,
+                verbose=1
+            )
         else:
             self.model.fit(
                 x_train,
@@ -125,6 +141,7 @@ class RNN_pretrained_embed:
                 validation_data=(x_val, y_val),
                 validation_steps=len(x_val),
                 callbacks=call_backs,
+                verbose=1
             )
 
         return self.model
