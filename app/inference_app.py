@@ -10,7 +10,7 @@ import sys
 import os
 import warnings
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # or any {'0', '1', '2'}
-os.environ["CUDA_VISIBLE_DEVICES"] = ""  # dont need gpu for inference
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # disable cuda, no need for gpu for inference
 warnings.filterwarnings("ignore")
 
 from algorithm.predictions_handler import Predictor

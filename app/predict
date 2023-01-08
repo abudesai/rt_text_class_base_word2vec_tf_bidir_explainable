@@ -14,7 +14,7 @@ import tensorflow as tf
 test_data_path = config.TEST_DATA_PATH
 failure_path = config.FAILURE_PATH
 seed = config.RAND_SEED
-tf.random.set_seed(seed)
+tf.random.set_seed(seed) 
 
 def predict():    
     try:        

@@ -111,7 +111,6 @@ class explainer:
         return output
 
 
-
 def make_serializable(obj):
     if isinstance(obj, (int, np.integer)):
         return int(obj)
